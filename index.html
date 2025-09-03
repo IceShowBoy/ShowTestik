@@ -12,7 +12,7 @@
             background-color: #f0f0f0;
         }
         #quiz-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             padding: 20px;
@@ -37,6 +37,48 @@
             text-align: left;
             margin: 5px 0;
         }
+        .feedback {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .correct-feedback {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect-feedback {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .correct-row {
+            background-color: #d4edda;
+        }
+        .incorrect-row {
+            background-color: #f8d7da;
+        }
+        .user-answer {
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -47,6 +89,7 @@
         <div id="question-container" style="display: none;">
             <h2 id="question"></h2>
             <div id="answer-buttons"></div>
+            <div id="feedback" class="feedback" style="display: none;"></div>
             <button id="next-btn" class="btn" style="display: none;">Следующий вопрос</button>
         </div>
 
@@ -54,6 +97,8 @@
         
         <div id="result-container" style="display: none;">
             <h2 id="result-text"></h2>
+            <div id="results-table"></div>
+            <button id="restart-btn" class="btn">Пройти тест снова</button>
         </div>
     </div>
 
@@ -76,12 +121,20 @@
                     { text: "Новосибирск", correct: false }
                 ]
             },
-            // Добавьте сюда остальные вопросы...
+            {
+                question: "Самая большая планета Солнечной системы?",
+                answers: [
+                    { text: "Земля", correct: false },
+                    { text: "Юпитер", correct: true },
+                    { text: "Сатурн", correct: false }
+                ]
+            }
         ];
 
         // Переменные для отслеживания состояния
         let currentQuestionIndex = 0;
         let score = 0;
+        let userAnswers = [];
 
         // Получаем элементы со страницы
         const startBtn = document.getElementById('start-btn');
@@ -89,9 +142,12 @@
         const questionContainer = document.getElementById('question-container');
         const questionElement = document.getElementById('question');
         const answerButtonsElement = document.getElementById('answer-buttons');
+        const feedbackElement = document.getElementById('feedback');
         const nextBtn = document.getElementById('next-btn');
         const resultContainer = document.getElementById('result-container');
         const resultText = document.getElementById('result-text');
+        const resultsTable = document.getElementById('results-table');
+        const restartBtn = document.getElementById('restart-btn');
 
         // Обработчик кнопки "Начать"
         startBtn.addEventListener('click', startGame);
@@ -106,12 +162,17 @@
             }
         });
 
+        // Обработчик кнопки перезапуска
+        restartBtn.addEventListener('click', startGame);
+
         function startGame() {
             startBtn.style.display = 'none';
             welcomeText.style.display = 'none';
             questionContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
             currentQuestionIndex = 0;
             score = 0;
+            userAnswers = [];
             showQuestion();
         }
 
@@ -119,13 +180,13 @@
         function showQuestion() {
             resetState();
             const currentQuestion = questions[currentQuestionIndex];
-            questionElement.innerText = currentQuestion.question;
+            questionElement.innerText = `Вопрос ${currentQuestionIndex + 1}: ${currentQuestion.question}`;
 
             currentQuestion.answers.forEach(answer => {
                 const button = document.createElement('button');
                 button.innerText = answer.text;
                 button.classList.add('btn', 'answer-btn');
-                button.addEventListener('click', () => selectAnswer(answer.correct));
+                button.addEventListener('click', () => selectAnswer(answer));
                 answerButtonsElement.appendChild(button);
             });
         }
@@ -133,26 +194,47 @@
         // Сбрасывает состояние перед показом нового вопроса
         function resetState() {
             nextBtn.style.display = 'none';
+            feedbackElement.style.display = 'none';
             while (answerButtonsElement.firstChild) {
                 answerButtonsElement.removeChild(answerButtonsElement.firstChild);
             }
         }
 
         // Обработчик выбора ответа
-        function selectAnswer(isCorrect) {
-            if (isCorrect) {
-                score++;
-            }
+        function selectAnswer(answer) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const correctAnswer = currentQuestion.answers.find(a => a.correct);
+            
+            // Сохраняем ответ пользователя
+            userAnswers.push({
+                question: currentQuestion.question,
+                userAnswer: answer.text,
+                correctAnswer: correctAnswer.text,
+                isCorrect: answer.correct
+            });
+
             // Блокируем кнопки после выбора
             Array.from(answerButtonsElement.children).forEach(button => {
                 button.disabled = true;
                 // Подсвечиваем правильный ответ
-                if (button.innerText === questions[currentQuestionIndex].answers.find(a => a.correct).text) {
+                if (button.innerText === correctAnswer.text) {
                     button.style.backgroundColor = '#4CAF50';
-                } else {
+                } else if (button.innerText === answer.text && !answer.correct) {
                     button.style.backgroundColor = '#ff4444';
                 }
             });
+
+            // Показываем feedback
+            feedbackElement.style.display = 'block';
+            if (answer.correct) {
+                feedbackElement.textContent = "Yeeeeeeeah!";
+                feedbackElement.className = "feedback correct-feedback";
+                score++;
+            } else {
+                feedbackElement.textContent = "Писец! Ладно, идем дальше(";
+                feedbackElement.className = "feedback incorrect-feedback";
+            }
+
             nextBtn.style.display = 'block';
         }
 
@@ -169,6 +251,39 @@
             } else {
                 resultText.innerText = `Спасибо за прохождение! Вы ответили правильно на ${score} из ${questions.length} вопросов. Попробуйте еще раз!`;
             }
+
+            // Создаем таблицу с результатами
+            createResultsTable();
+        }
+
+        // Создает таблицу с результатами
+        function createResultsTable() {
+            let tableHTML = `
+                <table>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Результат</th>
+                    </tr>
+            `;
+
+            userAnswers.forEach((answer, index) => {
+                const rowClass = answer.isCorrect ? 'correct-row' : 'incorrect-row';
+                const resultText = answer.isCorrect ? '✅ Правильно' : '❌ Неправильно';
+                
+                tableHTML += `
+                    <tr class="${rowClass}">
+                        <td>${index + 1}. ${answer.question}</td>
+                        <td class="user-answer">${answer.userAnswer}</td>
+                        <td class="correct-answer">${answer.correctAnswer}</td>
+                        <td>${resultText}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</table>';
+            resultsTable.innerHTML = tableHTML;
         }
     </script>
 </body>
