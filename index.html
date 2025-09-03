@@ -31,12 +31,46 @@
         .btn:hover {
             background-color: #367c39;
         }
+        /* NEW: Стили для таблицы результатов */
+        #result-table-container {
+            margin: 20px auto;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .result-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .result-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .user-answer.correct {
+            color: green;
+            font-weight: bold;
+        }
+        .user-answer.incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: green;
+        }
     </style>
 </head>
 <body>
     <div id="quiz-container">
         <h1>Тест</h1>
-        <p id="welcome-text">Добро пожаловать, Шоугерл! Нажми "Начать" и мы исследуем насколько хорошо ты знаешь Шоубоя.</p>
+        <p id="welcome-text">Добро пожаловать! Нажмите "Начать", чтобы проверить свои знания.</p>
         
         <div id="question-container" style="display: none;">
             <h2 id="question"></h2>
@@ -48,6 +82,8 @@
         
         <div id="result-container" style="display: none;">
             <h2 id="result-text"></h2>
+            <!-- NEW: Контейнер для таблицы результатов -->
+            <div id="result-table-container"></div>
         </div>
     </div>
 
@@ -55,101 +91,29 @@
         // Массив с вопросами и ответами
         const questions = [
             {
-                question: "Какой любимейший цвет у ШоуБоя?",
+                question: "Сколько будет 2+2?",
                 answers: [
-                    { text: "Алый", correct: false },
-                    { text: "Лиловый", correct: false },
-                    { text: "Синий", correct: true },
-                    { text: "Фисташковый", correct: false }
+                    { text: "3", correct: false },
+                    { text: "4", correct: true },
+                    { text: "5", correct: false }
                 ]
             },
             {
-                question: "Какой фастфудик выберет ШоуБойчик на фудкорте?",
+                question: "Столица России?",
                 answers: [
-                    { text: "Макшнакнес", correct: false },
-                    { text: "БК", correct: false },
-                    { text: "Франклинс", correct: true },
-                    { text: "Киэфси", correct: false },
-                    { text: "Крофка Картофка", correct: false }
+                    { text: "Санкт-Петербург", correct: false },
+                    { text: "Москва", correct: true },
+                    { text: "Новосибирск", correct: false }
                 ]
             },
-            {
-                question: "По какой песне сохнет Шоубой?",
-                answers: [
-                    { text: "Dame un Grrr (Fantomel, KATE LINN)", correct: false },
-                    { text: "MENTE MA (NAKAMA, MC Staff)", correct: false },
-                    { text: "Наследство (ICEGERGERT, SKY RAE)", correct: false },
-                    { text: "Наследство (Шоугерл, Кристос)", correct: true }
-                ]
-            },
-            {
-                question: "Сколько ложек кофи и кубиков сахара он кладет в чашку?",
-                answers: [
-                    { text: "0,5 кофи и 1 кубик", correct: false },
-                    { text: "1 кофи и 1 кубик", correct: true },
-                    { text: "1 кофи и 1,5 кубика", correct: false },
-                    { text: "1,5 кофи и 1 кубик", correct: false },
-                    { text: "1,5 кофи и 1,5 кубика", correct: false }
-                ]
-            },
-            {
-                question: "Что он кричит, когда оплачивает покупки приложением Сбербанка?",
-                answers: [
-                    { text: "Сосать Америка, сосать!", correct: true },
-                    { text: "Yessssssss!", correct: false },
-                    { text: "Ляпота!", correct: false }
-                ]
-            },
-            {
-                question: "Спишь????????????",
-                answers: [
-                    
-                    { text: "АХАХАХАХАХ погнали дальше, дурак", correct: true }
-                ]
-            },
-            {
-                question: "Что больше всего любит этот ваш ШоуБой?",
-                answers: [
-                    { text: "Чай", correct: true },
-                    { text: "Кофе", correct: false },
-                    { text: "Цикорий", correct: false }
-                ]
-            },
-            
-            {
-                question: "О каком отдыхе мечтает Шоубой в 2026 году?",
-                answers: [
-                    { text: "Лежать в кроватке", correct: false },
-                    { text: "Поехать в круиз по Европе", correct: true },
-                    { text: "Отправиться на лыжный курорт во Францию", correct: false },
-                    { text: "Отдых на Кубе", correct: false }
-                ]
-            },
-            {
-                question: "Где раньше жил Шоубой?",
-                answers: [
-                    { text: "В Избе", correct: false },
-                    { text: "В Икше", correct: true },
-                    { text: "В Истре", correct: false },
-                    { text: "В согласии и гармонии", correct: false },
-                    { text: "В Дмитрове", correct: false }
-                ]
-            },
-            {
-                question: "Какой стикер Шоубой постоянно хочет сделать в свой стикерпак, но Шоугерл его постоянно забалтывает",
-                answers: [
-                    { text: "Легендарный окей", correct: true },
-                    { text: "В стиле 'Um Grrr'", correct: false },
-                    { text: "Приветствие", correct: false }
-                ]
-            },
-            
             // Добавьте сюда остальные вопросы...
         ];
 
         // Переменные для отслеживания состояния
         let currentQuestionIndex = 0;
         let score = 0;
+        // NEW: Массив для хранения ответов пользователя
+        let userAnswers = [];
 
         // Получаем элементы со страницы
         const startBtn = document.getElementById('start-btn');
@@ -160,6 +124,16 @@
         const nextBtn = document.getElementById('next-btn');
         const resultContainer = document.getElementById('result-container');
         const resultText = document.getElementById('result-text');
+// NEW: Контейнер для таблицы результатов
+        const resultTableContainer = document.getElementById('result-table-container');
+
+        // Создаем новые элементы для отображения сообщения
+        const messageElement = document.createElement('div');
+        messageElement.id = 'message';
+        messageElement.style.marginTop = '20px';
+        messageElement.style.fontWeight = 'bold';
+        messageElement.style.fontSize = '1.2em';
+        questionContainer.appendChild(messageElement);
 
         // Обработчик кнопки "Начать"
         startBtn.addEventListener('click', startGame);
@@ -168,8 +142,11 @@
             startBtn.style.display = 'none';
             welcomeText.style.display = 'none';
             questionContainer.style.display = 'block';
+            messageElement.style.display = 'none'; // Скрываем сообщение в начале
             currentQuestionIndex = 0;
             score = 0;
+            // NEW: Очищаем историю ответов
+            userAnswers = [];
             showQuestion();
         }
 
@@ -178,12 +155,14 @@
             resetState();
             const currentQuestion = questions[currentQuestionIndex];
             questionElement.innerText = currentQuestion.question;
+            messageElement.style.display = 'none'; // Скрываем сообщение перед новым вопросом
 
             currentQuestion.answers.forEach(answer => {
                 const button = document.createElement('button');
                 button.innerText = answer.text;
                 button.classList.add('btn');
-                button.addEventListener('click', () => selectAnswer(answer.correct));
+                // CHANGED: Передаем текст ответа в функцию selectAnswer
+                button.addEventListener('click', () => selectAnswer(answer.correct, answer.text));
                 answerButtonsElement.appendChild(button);
             });
         }
@@ -191,16 +170,36 @@
         // Сбрасывает состояние перед показом нового вопроса
         function resetState() {
             nextBtn.style.display = 'none';
+            nextBtn.innerText = 'Далее'; // Сбрасываем текст кнопки
             while (answerButtonsElement.firstChild) {
                 answerButtonsElement.removeChild(answerButtonsElement.firstChild);
             }
         }
 
-        // Обработчик выбора ответа
-        function selectAnswer(isCorrect) {
+        // NEW: Измененная функция selectAnswer - теперь принимает текст ответа
+        function selectAnswer(isCorrect, answerText) {
+            // Сохраняем ответ пользователя
+            userAnswers.push({
+                question: questions[currentQuestionIndex].question,
+                userAnswer: answerText,
+                isCorrect: isCorrect,
+                correctAnswer: questions[currentQuestionIndex].answers.find(a => a.correct).text
+            });
+
+            // Показываем сообщение в зависимости от правильности ответа
+            messageElement.style.display = 'block';
+            
             if (isCorrect) {
                 score++;
+                messageElement.innerText = "Yeaaaah!";
+                messageElement.style.color = 'green';
+                nextBtn.innerText = 'далее';
+            } else {
+                messageElement.innerText = "Писец какой-то! А стоит нам дальше общаться?";
+                messageElement.style.color = 'red';
+                nextBtn.innerText = 'Далее(((((';
             }
+
             // Блокируем кнопки после выбора
             Array.from(answerButtonsElement.children).forEach(button => {
                 button.disabled = true;
@@ -208,7 +207,7 @@
             nextBtn.style.display = 'block';
         }
 
-        // Обработчик кнопки "Ответить" (переход к следующему вопросу)
+        // Обработчик кнопки "Далее" (переход к следующему вопросу)
         nextBtn.addEventListener('click', () => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
@@ -218,21 +217,71 @@
             }
         });
 
-        // Показывает результат теста
+        // NEW: Функция для создания таблицы результатов
+        function createResultTable() {
+            const table = document.createElement('table');
+            table.classList.add('result-table');
+            
+            // Создаем заголовок таблицы
+            const headerRow = document.
+createElement('tr');
+            headerRow.innerHTML = `
+                <th>Вопрос</th>
+                <th>Ваш ответ</th>
+                <th>Правильный ответ</th>
+                <th>Результат</th>
+            `;
+            table.appendChild(headerRow);
+            
+            // Заполняем таблицу данными
+            userAnswers.forEach((answer, index) => {
+                const row = document.createElement('tr');
+                
+                const questionCell = document.createElement('td');
+                questionCell.textContent = answer.question;
+                
+                const userAnswerCell = document.createElement('td');
+                userAnswerCell.textContent = answer.userAnswer;
+                userAnswerCell.classList.add('user-answer');
+                userAnswerCell.classList.add(answer.isCorrect ? 'correct' : 'incorrect');
+                
+                const correctAnswerCell = document.createElement('td');
+                correctAnswerCell.textContent = answer.correctAnswer;
+                correctAnswerCell.classList.add('correct-answer');
+                
+                const resultCell = document.createElement('td');
+                resultCell.textContent = answer.isCorrect ? '✓ Правильно' : '✗ Неправильно';
+                resultCell.style.color = answer.isCorrect ? 'green' : 'red';
+                resultCell.style.fontWeight = 'bold';
+                
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(resultCell);
+                
+                table.appendChild(row);
+            });
+            
+            resultTableContainer.appendChild(table);
+        }
+
+        // CHANGED: Измененная функция showResult - теперь создает таблицу
         function showResult() {
             questionContainer.style.display = 'none';
             resultContainer.style.display = 'block';
 
             // Вариативные надписи в зависимости от результата
             if (score === questions.length) {
-                resultText.innerText = "Ничоооооси! Прям все правильные ответы! Ты выиграла пожизненную подписку на кофи!";
+                resultText.innerText = "Поздравляем! Вы гений! Идеальный результат!";
             } else if (score >= questions.length * 0.7) {
-                resultText.innerText = `Ну, в принципе, норм. Шоугерл ответила правильно на ${score} из ${questions.length} вопросов.`;
+                resultText.innerText = Поздравляем! Хороший результат! Вы ответили правильно на ${score} из ${questions.length} вопросов.;
             } else {
-                resultText.innerText = `Спасибо за прохождение! Вы ответили правильно на ${score} из ${questions.length} вопросов. Попробуйте еще раз!`;
+                resultText.innerText = Спасибо за прохождение! Вы ответили правильно на ${score} из ${questions.length} вопросов. Попробуйте еще раз!;
             }
+            
+            // NEW: Создаем таблицу с результатами
+            createResultTable();
         }
     </script>
 </body>
-
 </html>
