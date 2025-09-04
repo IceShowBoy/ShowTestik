@@ -84,7 +84,7 @@
 <body>
     <div id="quiz-container">
         <h1>Тест</h1>
-        <p id="welcome-text">Добро пожаловать! Нажмите "Начать", чтобы проверить свои знания.</p>
+       <p id="welcome-text">Добро пожаловать! Давай проверим твои знания про Димона-ШоуБоя.</p>
         
         <div id="question-container" style="display: none;">
             <h2 id="question"></h2>
@@ -189,7 +189,7 @@
                 ]
             },
             {
-                question: "Какой стикер Он постоянно хочет сделать в свой стикерпак, но Шоугерл его постоянно забалтывает",
+                question: "Какой стикер Он постоянно хочет сделать в свой стикерпак, но Шоугерл его постоянно забалтывает?",
                 answers: [
                     { text: "Легендарный окей", correct: true },
                     { text: "В стиле 'Um Grrr'", correct: false },
@@ -312,11 +312,11 @@
 
             // Вариативные надписи в зависимости от результата
             if (score === questions.length) {
-                resultText.innerText = "Поздравляем! Вы гений! Идеальный результат!";
+                resultText.innerText = "Ты просто БОМБА! Идеальный результат! Скрин скинь мне в тг!";
             } else if (score >= questions.length * 0.7) {
-                resultText.innerText = `Поздравляем! Хороший результат! Вы ответили правильно на ${score} из ${questions.length} вопросов.`;
+                resultText.innerText = `Харооооош! Ты ответила правильно на ${score} из ${questions.length} вопросов. Скрин скинь мне в тг!`;
             } else {
-                resultText.innerText = `Спасибо за прохождение! Вы ответили правильно на ${score} из ${questions.length} вопросов. Попробуйте еще раз!`;
+                resultText.innerText = `Пойдет, Бро! Ты ответила правильно на ${score} из ${questions.length} вопросов. Скрин скинь мне в тг!`;
             }
 
             // Создаем таблицу с результатами
